@@ -1,9 +1,11 @@
 package com.dam2.simon1
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.Toast
-
+import androidx.lifecycle.Observer
+import androidx.activity.viewModels
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,79 +17,56 @@ class MainActivity : AppCompatActivity() {
         val bt_azul : Button = findViewById(R.id.btAzul)
         val bt_start : Button = findViewById(R.id.btIniciar)
         val bt_check : Button = findViewById(R.id.btCheck)
-        val secuenciaColores: MutableList<Int> = mutableListOf()
-        val secUsuario: MutableList<Int> = mutableListOf()
-        var finished  = false
-        val toast = Toast.makeText(applicationContext,"START", Toast.LENGTH_SHORT)
-        val toast1 = Toast.makeText(applicationContext,"GAME OVER", Toast.LENGTH_SHORT)
-        bt_start.setOnClickListener{
-            finished = false
-            reset(secuenciaColores,secUsuario)
-            añadirSec(secuenciaColores)
+        val Btnscolor = listOf(bt_rojo,bt_verde,bt_amarillo,bt_azul)
+        val toast = Toast.makeText(applicationContext,"GAME OVER", Toast.LENGTH_SHORT)
+        val toast1 = Toast.makeText(applicationContext,"START", Toast.LENGTH_SHORT)
+
+        val ModeloJuego by viewModels<MyViewModel>()
+
+        ModeloJuego.estadoJuego.observe(this, Observer {
+
+            if () {
+                bt_verde.isEnabled = false
+                bt_rojo.isEnabled = false
+                bt_amarillo.isEnabled = false
+                bt_azul.isEnabled = false
+                bt_check.isEnabled = false
+                bt_start.isEnabled= false
+            } else {
+                bt_verde.isEnabled = true
+                bt_rojo.isEnabled = true
+                bt_amarillo.isEnabled = true
+                bt_amarillo.isEnabled = true
+                bt_check.isEnabled = true
+                bt_start.isEnabled= true
+            }
+        })
+
+        ModeloJuego.secuenciaJuego.observe(this, Observer {
+            ModeloJuego.mostrarSec(Btnscolor)
+        })
+
+        bt_start.setOnClickListener {
             toast.show()
-            mostrarSec(secuenciaColores)
+            ModeloJuego.iniciarJuego()
         }
-        bt_check.setOnClickListener{
-            if(!finished){
-                if(comprobarSec(secuenciaColores,secUsuario)){
-                    añadirSec(secuenciaColores)
-                    secUsuario.clear()
-                    mostrarSec(secuenciaColores)
-                }else{
-                    finished = true
-                    toast1.show()
-                }
+
+        bt_check.setOnClickListener {
+            if (!ModeloJuego.comprobarSec()) {
+                toast1.show()
             }
         }
-
-        bt_verde.setOnClickListener{
-            añadirSecUsuario(secUsuario,1)
+        bt_verde.setOnClickListener {
+            ModeloJuego.añadirSecuencia(1)
         }
-
-        bt_rojo.setOnClickListener{
-            añadirSecUsuario(secUsuario,2)
+        bt_rojo.setOnClickListener {
+            ModeloJuego.añadirSecuencia(2)
         }
-
-        bt_amarillo.setOnClickListener{
-            añadirSecUsuario(secUsuario,3)
+        bt_amarillo.setOnClickListener {
+            ModeloJuego.añadirSecuencia(3)
         }
-
-        bt_azul.setOnClickListener{
-            añadirSecUsuario(secUsuario,4)
-        }
-    }
-
-    fun añadirSec(sec : MutableList<Int>)  {
-        val numb = kotlin.random.Random.nextInt(4) + 1
-        sec.add(numb)
-    }
-
-    fun comprobarSec(sec : MutableList<Int>, secUsr : MutableList<Int>) : Boolean {
-        return sec == secUsr
-    }
-
-    fun reset(sec: MutableList<Int>, secUsr: MutableList<Int>){
-        sec.clear()
-        secUsr.clear()
-    }
-
-    fun añadirSecUsuario(secUsr: MutableList<Int>, color: Int){
-        when(color){
-            1 -> secUsr.add(1)
-            2 -> secUsr.add(2)
-            3 -> secUsr.add(3)
-            else -> secUsr.add(4)
-        }
-    }
-
-    fun mostrarSec(sec: MutableList<Int>){
-        for (color in sec){
-            when(color){
-                1 -> Toast.makeText(applicationContext,"VERDE", Toast.LENGTH_SHORT).show()
-                2 -> Toast.makeText(applicationContext,"ROJO", Toast.LENGTH_SHORT).show()
-                3 -> Toast.makeText(applicationContext,"AMARILLO", Toast.LENGTH_SHORT).show()
-                4 -> Toast.makeText(applicationContext,"AZUL", Toast.LENGTH_SHORT).show()
-            }
+        bt_azul.setOnClickListener {
+            ModeloJuego.añadirSecuencia(4)
         }
     }
 }
