@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                 bt_verde.isEnabled = true
                 bt_rojo.isEnabled = true
                 bt_amarillo.isEnabled = true
-                bt_amarillo.isEnabled = true
+                bt_azul.isEnabled = true
                 bt_check.isEnabled = true
                 bt_start.isEnabled= true
             }
